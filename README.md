@@ -1,23 +1,40 @@
-# repo-template
-Generic repo template for Plus3IT repositories
+## Overview
 
-To use this template:
+Once this certificate authority has been created, it will enter a "Pending" state, and output a Certificate Signing Request. The CSR needs to be self-signed (in the case of acmpca_certificate_authority.type being "ROOT") or signed by a root certificate authority if this is meant to be a "SUBORDINATE".
 
-1. Select the green "Use this template" button, or [click here](https://github.com/plus3it/repo-template/generate).
-2. Select the repo Owner, give the repo a name, enter a description, select Public or Private, and click "Create repository from template".
-3. Clone the repository and create a new branch.
-4. Edit the following files to customize them for the new repository:
-    * `LICENSE`
-        * Near the end of the file, edit the date and change the repository name
-    * `CHANGELOG.template.md`
-        * Rename to `CHANGELOG.md`, replacing the repo-template changelog
-        * Edit templated items for the new repo
-    * `.bumpversion.cfg`
-        * Edit the version number for the new repo, ask team if not sure what to
-          start with
-    * `README.md`
-        * Replace contents for the new repo
-    * `.github/`
-        * Inspect dependabot and workflow files in case changes are needed for
-          the new repo
-5. Commit the changes and open a pull request
+After signing, you will need to use the AWS PCA CLI to manually associate the signed cert back to the certificate authortiy, which will put it in an "Active" state. See <https://awscli.amazonaws.com/v2/documentation/api/latest/reference/acm-pca/index.html> for console reference.
+
+If the PCA and certs it issues are in the same account, you can use CreatePermission to configure automatic renewal.
+
+If the PCA and ACM reside in different accounts, share the PCA using a RAM Share to allow ACM in the other account to manage the certificate.
+
+<!-- BEGIN TFDOCS -->
+## Requirements
+
+No requirements.
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
+
+## Resources
+
+| Name | Type |
+|------|------|
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_private_certificate_authority"></a> [private\_certificate\_authority](#input\_private\_certificate\_authority) | n/a | <pre>object({<br>    s3_bucket = optional(object({<br>      bucket        = string<br>      force_destroy = bool<br>      policy = object({<br>        json = string<br>      })<br>    }))<br><br>    acmpca_certificate_authority = object({<br>      enabled                         = bool<br>      key_storage_security_standard   = optional(string)<br>      permanent_deletion_time_in_days = optional(string)<br>      tags                            = map(string)<br>      type                            = optional(string)<br>      usage_mode                      = optional(string)<br><br>      certificate_authority_configuration = object({<br>        key_algorithm     = string<br>        signing_algorithm = string<br>        subject = object({<br>          common_name                  = optional(string)<br>          country                      = optional(string)<br>          distinguished_name_qualifier = optional(string)<br>          generation_qualifier         = optional(string)<br>          given_name                   = optional(string)<br>          initials                     = optional(string)<br>          locality                     = optional(string)<br>          organization                 = optional(string)<br>          organizational_unit          = optional(string)<br>          pseudonym                    = optional(string)<br>          state                        = optional(string)<br>          surname                      = optional(string)<br>          title                        = optional(string)<br>        })<br>      })<br><br>      revocation_configuration = optional(object({<br>        crl_configuration = optional(object({<br>          custom_cname       = string<br>          enabled            = bool<br>          expiration_in_days = string<br>          s3_bucket_name     = string<br>          s3_object_acl      = string<br>        }))<br>        ocsp_configuration = optional(object({<br>          enabled           = bool<br>          ocsp_custom_cname = string<br>        }))<br>      }))<br>    })<br>  })</pre> | n/a | yes |
+| <a name="input_bucket_acl"></a> [bucket\_acl](#input\_bucket\_acl) | Determines whether the CRL will be publicly readable or privately held in the CRL Amazon S3 bucket. | `string` | `"BUCKET_OWNER_FULL_CONTROL"` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| <a name="output_certificate_signing_request"></a> [certificate\_signing\_request](#output\_certificate\_signing\_request) | n/a |
+
+<!-- END TFDOCS -->
