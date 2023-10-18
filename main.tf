@@ -46,7 +46,7 @@ resource "aws_acmpca_certificate_authority" "this" {
         for_each = var.private_certificate_authority.acmpca_certificate_authority.revocation_configuration.crl_configuration != null ? [1] : []
         content {
           custom_cname       = var.private_certificate_authority.acmpca_certificate_authority.revocation_configuration.crl_configuration.custom_cname
-          enabled            = var.private_certificate_authority.acmpca_certificate_authority.revocation_configuration.crl_configuration.custom_cname
+          enabled            = var.private_certificate_authority.acmpca_certificate_authority.revocation_configuration.crl_configuration.enabled
           expiration_in_days = var.private_certificate_authority.acmpca_certificate_authority.revocation_configuration.crl_configuration.expiration_in_days
           s3_bucket_name     = var.private_certificate_authority.acmpca_certificate_authority.revocation_configuration.crl_configuration.s3_bucket_name
           s3_object_acl      = var.private_certificate_authority.acmpca_certificate_authority.revocation_configuration.crl_configuration.s3_object_acl
