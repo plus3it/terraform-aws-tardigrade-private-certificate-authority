@@ -1,9 +1,3 @@
-variable "bucket_acl" {
-  type        = string
-  description = "Determines whether the CRL will be publicly readable or privately held in the CRL Amazon S3 bucket."
-  default     = "BUCKET_OWNER_FULL_CONTROL"
-}
-
 variable "private_certificate_authority" {
   type = object({
     s3_bucket = optional(object({
@@ -47,7 +41,6 @@ variable "private_certificate_authority" {
           custom_cname       = string
           enabled            = bool
           expiration_in_days = string
-          s3_bucket_name     = string
           s3_object_acl      = string
         }))
         ocsp_configuration = optional(object({
